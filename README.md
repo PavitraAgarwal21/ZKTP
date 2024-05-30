@@ -1,2 +1,1 @@
-# ZKTP
-A zero knowledge base Ticket checking . 
+First creating the circuits 
