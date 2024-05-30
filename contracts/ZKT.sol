@@ -1,8 +1,8 @@
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "../node_modules/@openzeppelin/contracts/utils/Address.sol";
-import "../node_modules/@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 
 // interface for the verifier contract  
 interface IVerifier {
@@ -41,9 +41,10 @@ contract ZKT{
     }
 
 // helper function 
-    function calculateFees(uint256 ticketPrice  ) pure public  returns (uint256 fees , uint256 total ) {
-        fees = ticketPrice.div(100) ; // the one percent of the ticket price is the  fees 
-        total = ticketPrice.add(fees) ; 
+    function calculateFees(uint256 ticketPrice  ) pure public  returns (uint256, uint256  ) {
+        (bool _sucess ,uint256 fees) = ticketPrice.tryDiv(100) ; // the one percent of the ticket price is the  fees 
+        (bool _sucess2,uint256 total) = ticketPrice.tryAdd(fees) ; 
+        return (fees , total) ;
     } 
 //create event for the TicketEvent 
 mapping (uint256 => TicketEvent ) ticketEvents ;
