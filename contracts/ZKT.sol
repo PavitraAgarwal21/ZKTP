@@ -99,8 +99,8 @@ require(ticketEvents[eventIndex].noOfTicketAvl > 0 , "tickets are sold out !!") 
 
 
 //TODO! some custom logic 
-//case 1 sending the ticket price to the event creator when it is invalidated the ticket 
-//case 2 if it is not invldated then after the event is expire the 50-50 is given back to the ticket buyer and event creator 
+//case 1 sending the ticket price to the event creator when it is invalidated the ticket not just after buying of thr ticket . 
+//case 2 if it is not invldated then after the event is expire the 50-50 is given back to the ticket buyer and event creator . 
 
 
 // sending the ticket price to event creator 
@@ -132,19 +132,5 @@ if (!TicketCommitments[_commitment].used)
 return true ; 
 }
 
-
-
-
 // invalidate ticket 
-
-
-
-
-
-
-
-
-
-
-
 }
