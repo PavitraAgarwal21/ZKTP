@@ -1,6 +1,7 @@
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -133,4 +134,9 @@ return true ;
 }
 
 // invalidate ticket 
+// fucntion defination 
+    function verify(uint[] memory input, Proof memory proof) internal view returns (uint) {}
+
+
+
 }
