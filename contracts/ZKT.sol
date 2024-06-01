@@ -11,7 +11,7 @@ interface IVerifier {
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
-        uint256[2] memory _input
+        uint256[2] memory public_input
     ) external returns (bool);
 } 
  // event  
@@ -132,10 +132,24 @@ if (!TicketCommitments[_commitment].used)
 }
 return true ; 
 }
+event InvalideTicket(bytes32 commitment) ;
+function invalidateTicket(uint256[8] calldata _proof, bytes32 _commitment , bytes32 _nullifierHash) internal {
+require(!nullifierHashes[_nullifierHash] , "nullifier hash already used") ;
+require(TicketCommitments[_commitment].used , "invalid commitment") ; 
+// only the event creator can invalidate the ticket 
+require(ticketEvents[TicketCommitments[_commitment].ticketEventIndex].creator == msg.sender , "only event creator can invalidate the ticket") ;
 
-// invalidate ticket 
-// fucntion defination 
-    function verify(uint[] memory input, Proof memory proof) internal view returns (uint) {}
+require (verifier.verifyProof(
+    [_proof[0], _proof[1]], 
+    [[_proof[2], _proof[3]], [_proof[4], _proof[5]]], 
+    [_proof[6], _proof[7]], 
+    [uint256(_commitment), uint256(_nullifierHash)]
+    ), "Invalid proof");
+
+
+nullifierHashes[_nullifierHash] = true ;
+emit InvalideTicket(_commitment) ;
+    }
 
 
 
