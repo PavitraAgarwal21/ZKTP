@@ -181,9 +181,9 @@ export function verifyTicket(vk: any, {proof , publicSignals } : TotalProof ): P
 }
 
 
-type solidityProof = {
-    pi_a 
-}
+// type solidityProof = {
+//     pi_a 
+// }
 //// convert the proof according to the verifier.sol
 //function verifyProof(uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[2] calldata _pubSignals) public view returns (bool) {
 
@@ -194,7 +194,8 @@ async function testProofGenerator() {
     const verificationKeyFile = fs.readFileSync("./circuits/verification_key.json", "utf-8");
     const verificationKey = JSON.parse(verificationKeyFile);
     console.log(await verifyTicket( verificationKey, proof ) ); // in this verification key is contain the cureve name also so 
-    }
+console.log("proof is verified ") ;    
+}
     testProofGenerator() ;
 
 

@@ -41,7 +41,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./dist/index.js"
+    "start": "nodemon ./utils/index.js"
   },
   "keywords": [],
   "author": "",
