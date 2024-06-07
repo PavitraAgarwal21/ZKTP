@@ -27,7 +27,7 @@ interface IVerifier {
  uint256 ticketEventIndex ;
  bool used ; 
  }
-contract ZKT{ 
+contract ZKTP{ 
 
      using Math for uint256 ; 
      using Address for address ;
@@ -132,13 +132,15 @@ if (!TicketCommitments[_commitment].used)
 }
 return true ; 
 }
+
+//   function verifyProof(uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[2] calldata _pubSignals) public view returns (bool) {
+
 event InvalideTicket(bytes32 commitment) ;
 function invalidateTicket(uint256[8] calldata _proof, bytes32 _commitment , bytes32 _nullifierHash) internal {
-require(!nullifierHashes[_nullifierHash] , "nullifier hash already used") ;
+require(!nullifierHashes[_nullifierHash] , "nullifier hash already used");
 require(TicketCommitments[_commitment].used , "invalid commitment") ; 
 // only the event creator can invalidate the ticket 
 require(ticketEvents[TicketCommitments[_commitment].ticketEventIndex].creator == msg.sender , "only event creator can invalidate the ticket") ;
-
 require (verifier.verifyProof(
     [_proof[0], _proof[1]], 
     [[_proof[2], _proof[3]], [_proof[4], _proof[5]]], 
@@ -146,11 +148,7 @@ require (verifier.verifyProof(
     [uint256(_commitment), uint256(_nullifierHash)]
     ), "Invalid proof");
 
-
 nullifierHashes[_nullifierHash] = true ;
 emit InvalideTicket(_commitment) ;
     }
-
-
-
 }

@@ -1,0 +1,1 @@
+cp ./circuits/verifier.sol  ./contracts/

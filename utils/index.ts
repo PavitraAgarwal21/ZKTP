@@ -19,16 +19,19 @@ import fs from "fs" ;
 
 // big number is the uinion of --- number | bigint | string | BigInteger;
 
-type bigNumber = string | bigint  ; // as in the defination of the groth16 there is the publicsignals is defined as the string and number(bignumber) 
+export type bigNumber = string | bigint  ; // as in the defination of the groth16 there is the publicsignals is defined as the string and number(bignumber) 
 
 //ticket 
- type Ticket = { 
+ export type Ticket = { 
     nullifier   : bigint, 
     nullifierhash : bigint, 
     secret  : bigint,    
     pre_commitment  : Buffer,
     commitment  : bigint,
 };
+
+
+
 //function verifyProof(uint[2] calldata _pA, u  _pB, uint[2] calldata _pC, uint[2] calldata _pubSignals) public view returns (bool) {
 
 //  proof: {
@@ -47,7 +50,7 @@ type bigNumber = string | bigint  ; // as in the defination of the groth16 there
     //   curve: 'bn128'
     // },
 
-     type Proof = {
+     export type Proof = {
         pi_a: bigNumber [],
         pi_b: bigNumber[][],
         pi_c: bigNumber[],
@@ -57,7 +60,7 @@ type bigNumber = string | bigint  ; // as in the defination of the groth16 there
     
 
     // 
-    type PublicSignals = {
+   export  type PublicSignals = {
         nullifierHash: bigint,
         commitmentHash: bigint
     }
@@ -68,32 +71,32 @@ type bigNumber = string | bigint  ; // as in the defination of the groth16 there
     }
 
 // creating the nullifierhash function 
-function nullifierhasher (nullifier : bigNumber)  : bigint {
+export function nullifierhasher (nullifier : bigNumber)  : bigint {
 return poseidon([nullifier])
 }
 
 // first it take the secret and nullifer and then hash it 
-function commitmenthasher (nullifer : bigNumber , secret : bigNumber ) : bigint {
+export function commitmenthasher (nullifer : bigNumber , secret : bigNumber ) : bigint {
     return poseidon([BigInt(nullifer) , BigInt(secret)]) 
 }
 // let nullifier_hash : bigint = commitmenthasher(3n , 12n) ;
 // console.log(nullifier_hash) ;
 
 // generating the randome number of the bytes32  as we defined in the solidity contract 
-function generateRandomNumber() : bigint {
+export function generateRandomNumber() : bigint {
     return utils.leBuff2int(crypto.randomBytes(31));
 }   
 // let random_number = generateRandomNumber() ;
 // console.log(random_number) ;
 // creating the ticket 
 
-function toNoteHex(number: Buffer | any, length = 32) {
+export function ticketHex(number: Buffer | any, length = 32) {
     const str = number instanceof Buffer ? number.toString('hex') : bigInt(number).toString(16)
     return '0x' + str.padStart(length * 2, '0')
 }
 
 // create the ticket  
-async function createTicket(nullifier : bigint  , secret : bigint) : Promise<Ticket> {
+export async function createTicket(nullifier : bigint  , secret : bigint) : Promise<Ticket> {
     return { 
         nullifier : nullifier , 
         nullifierhash :  nullifierhasher(nullifier) ,
@@ -103,15 +106,39 @@ async function createTicket(nullifier : bigint  , secret : bigint) : Promise<Tic
         pre_commitment :  Buffer.concat([utils.leInt2Buff(nullifier,31) , utils.leInt2Buff(secret,31)]),
     };
 }
+
+
+export async function parseTicket(noteString: string) {
+    const noteRegex = /zkticket-(?<chainid>\d+)-0x(?<note>[0-9a-fA-F]{124})/g;
+    const match = noteRegex.exec(noteString);
+
+    if (!match || !match.groups) {
+        throw new Error("Invalid Note!");
+    }
+
+    const buf = Buffer.from(match.groups.note, "hex");
+    const nullifier = utils.leBuff2int(buf.slice(0, 31));
+    const secret = utils.leBuff2int(buf.slice(31, 62));
+    const cryptoNote = await createTicket(nullifier, secret );
+    const chainid = Number(match.groups.chainid);
+
+    return { cryptoNote, chainid }
+}
+
+
+
+
+
+
 // let ticket = createTicket(2n,4n) ;
 // console.log(ticket) ;
 
 // i have uses the chainid so that it can prevent from the replay attack 
 // we have to create the ticket event base -- that is based on the event index 
-async function createEventTicket(chainid  : number) : Promise<string>{
+export async function createEventTicket(chainid  : number) : Promise<string>{
     // ticket 
     const  ticket = await createTicket(generateRandomNumber(), generateRandomNumber()) ;
-    const ticket_hash = toNoteHex(ticket.pre_commitment , 62) ; 
+    const ticket_hash = ticketHex(ticket.pre_commitment , 62) ; 
     const ticket_string = `ZKTP-${chainid}-${ticket_hash}`; 
     return ticket_string ;    
     // the main thing the ticket contain is the 
@@ -130,7 +157,7 @@ async function createEventTicket(chainid  : number) : Promise<string>{
 // generating the proof
 // for generating the proof we include the 
 // inputs , wasm file , and verifcation key 
-async function generateTicketProof(ticket : Ticket ) : Promise<any> {
+export async function generateTicketProof(ticket : Ticket ) : Promise<any> {
     
     // signal input nullifier  ;
     // signal input  secret ; 
@@ -188,7 +215,7 @@ export function verifyTicket(vk: any, {proof , publicSignals } : TotalProof ): P
 //function verifyProof(uint[2] calldata _pA, uint[2][2] calldata _pB, uint[2] calldata _pC, uint[2] calldata _pubSignals) public view returns (bool) {
 
 
-async function testProofGenerator() {
+export async function testProofGenerator() {
     const proof : TotalProof = await generateTicketProof( await createTicket(2n,4n) ) ;
     
     const verificationKeyFile = fs.readFileSync("./circuits/verification_key.json", "utf-8");
@@ -198,9 +225,3 @@ console.log("proof is verified ") ;
 }
     testProofGenerator() ;
 
-
-
-
-
-
-export {}
