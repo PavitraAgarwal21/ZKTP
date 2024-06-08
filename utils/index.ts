@@ -72,6 +72,25 @@ function nullifierhasher (nullifier : bigNumber)  : bigint {
 return poseidon([nullifier])
 }
 
+
+export async function parseTicket(noteString: string) {
+    const noteRegex = /zkticket-(?<chainid>\d+)-0x(?<note>[0-9a-fA-F]{124})/g;
+    const match = noteRegex.exec(noteString);
+
+    if (!match || !match.groups) {
+        throw new Error("Invalid Note!");
+    }
+
+    const buf = Buffer.from(match.groups.note, "hex");
+    const nullifier = utils.leBuff2int(buf.slice(0, 31));
+    const secret = utils.leBuff2int(buf.slice(31, 62));
+    const cryptoNote = await createTicket(nullifier, secret );
+    const chainid = Number(match.groups.chainid);
+
+    return { cryptoNote, chainid }
+}
+
+
 // first it take the secret and nullifer and then hash it 
 function commitmenthasher (nullifer : bigNumber , secret : bigNumber ) : bigint {
     return poseidon([BigInt(nullifer) , BigInt(secret)]) 
@@ -197,10 +216,5 @@ async function testProofGenerator() {
 console.log("proof is verified ") ;    
 }
     testProofGenerator() ;
-
-
-
-
-
 
 export {}

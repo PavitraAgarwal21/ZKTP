@@ -27,7 +27,7 @@ interface IVerifier {
  uint256 ticketEventIndex ;
  bool used ; 
  }
-contract ZKT{ 
+contract ZKTP { 
 
      using Math for uint256 ; 
      using Address for address ;

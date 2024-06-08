@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTicket = void 0;
+exports.verifyTicket = exports.parseTicket = void 0;
 //@ts-ignore
 const circomlibjs_1 = require("circomlibjs");
 const snarkjs_1 = require("snarkjs");
@@ -16,6 +16,20 @@ const fs_1 = __importDefault(require("fs"));
 function nullifierhasher(nullifier) {
     return (0, circomlibjs_1.poseidon)([nullifier]);
 }
+async function parseTicket(noteString) {
+    const noteRegex = /zkticket-(?<chainid>\d+)-0x(?<note>[0-9a-fA-F]{124})/g;
+    const match = noteRegex.exec(noteString);
+    if (!match || !match.groups) {
+        throw new Error("Invalid Note!");
+    }
+    const buf = Buffer.from(match.groups.note, "hex");
+    const nullifier = ffjavascript_1.utils.leBuff2int(buf.slice(0, 31));
+    const secret = ffjavascript_1.utils.leBuff2int(buf.slice(31, 62));
+    const cryptoNote = await createTicket(nullifier, secret);
+    const chainid = Number(match.groups.chainid);
+    return { cryptoNote, chainid };
+}
+exports.parseTicket = parseTicket;
 // first it take the secret and nullifer and then hash it 
 function commitmenthasher(nullifer, secret) {
     return (0, circomlibjs_1.poseidon)([BigInt(nullifer), BigInt(secret)]);
