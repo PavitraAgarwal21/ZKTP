@@ -7,7 +7,6 @@ import { storeContext } from "../useContext/storeContext";
 import logo from "../Img/ZKTPS2.png";
 const Header = () => {
   const [display, setDisplay] = useState(null);
-
   const { account, setAccount, status, index } = useContext(storeContext);
   const truncateWalletAddress = async (address, length = 4) => {
     if (!address) return "";
@@ -49,7 +48,7 @@ const Header = () => {
     <Navbar.Brand href="/">
       <img
         src={logo}
-        className="ml-20"
+        className="ml-200"
         alt="Flowbite React Logo"
         style={{
           height: "157px",
