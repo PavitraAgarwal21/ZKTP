@@ -5,7 +5,7 @@ import { isMobile } from "react-device-detect";
 import { Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useContext, useState } from "react";
-import { getData } from "../web3/web3";
+// import { getData } from "../web3/web3";
 import { storeContext } from "../useContext/storeContext";
 
 /**
@@ -29,7 +29,7 @@ const QRReader = (props) => {
         ViewFinder={ViewFinder}
         constraints={{ facingMode }}
         onResult={async (result, error) => {
-          await getData(result, error, props, account);
+          // await getData(result, error, props, account);
         }}
       />
     </div>

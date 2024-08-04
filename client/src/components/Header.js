@@ -74,18 +74,18 @@ const Header = () => {
       <Navbar.Toggle />
     </div>
     <Navbar.Collapse>
-      {status ? (
+      {/* {status ? ( */}
         <Link to={`/home/${index}`}>Home</Link>
-      ) : (
+      {/* ) : (  */}
         <Link to="/">Home</Link>
-      )}
-      {status && (
+      {/* )}  */}
+      {/* {status && ( */}
         <>
           <Link to="/verify">Verify Ticket</Link>
           <Link to="/invalidate">Invalidate Ticket</Link>
           <Link to="/resale">Resale Tickets</Link>
         </>
-      )}
+      {/* )} */}
       <Link to="/buyResale">Buy Resale Tickets</Link>
       <Link to="/info">Info</Link>
     </Navbar.Collapse>

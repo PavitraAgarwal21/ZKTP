@@ -17,6 +17,7 @@ export async function requestAccounts(provider) {
   const accounts = await provider.send("eth_requestAccounts", []);
   return accounts[0];
 }
+
 export const getContract = (provider, address) => {
   const contractABI = abi.abi;
   const signer = provider.getSigner();
